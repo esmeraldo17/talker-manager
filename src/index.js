@@ -1,4 +1,5 @@
 const express = require('express');
+const { randomBytes } = require('crypto');
 const readFile = require('./utils/readfile');
 
 const app = express();
@@ -31,4 +32,10 @@ app.get('/talker/:id', async (req, res) => {
     }
 
   res.status(HTTP_OK_STATUS).json(findData);
+});
+
+app.post('/login', async (_req, res) => {
+  const token = () => randomBytes(8).toString('hex');
+
+  res.status(200).json({ token: token() });
 });
