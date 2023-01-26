@@ -88,11 +88,21 @@ const verifyRate = (req, res, next) => {
         return;
     }
 
-    if (rate < 1 || rate > 5) {
+    if (rate < 2 || rate > 5) {
         return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
     }
 
     if (!Number.isInteger(rate)) {
+        return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+    }
+
+    next();
+};
+
+const verifyLowerRate = (req, res, next) => {
+    const { rate } = req.body.talk;
+
+    if (rate === 0) {
         return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
     }
 
@@ -106,4 +116,5 @@ module.exports = {
     verifyTalk,
     verifywatchedAt,
     verifyRate,
+    verifyLowerRate,
 };

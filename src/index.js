@@ -62,3 +62,29 @@ app.post('/talker',
 
     res.status(201).json(requestPost);
 });
+
+app.put('/talker/:id',
+  validateTalker.verifyAuthorization,
+  validateTalker.verifyName,
+  validateTalker.verifyAge,
+  validateTalker.verifyTalk,
+  validateTalker.verifywatchedAt,
+  validateTalker.verifyLowerRate,
+  validateTalker.verifyRate,
+  async (req, res) => {
+    const { id } = req.params;
+    const data = await readFile();
+    const requestBody = req.body;
+
+    const talkerToEditIndex = data.findIndex((talker) => talker.id === Number(id));
+
+    const numberId = +id;
+
+    const editedTalker = { id: numberId, ...requestBody };
+
+    data[talkerToEditIndex] = editedTalker;
+
+    await writeFile(data);
+
+    res.status(200).json(editedTalker);
+});
