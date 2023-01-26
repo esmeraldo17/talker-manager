@@ -1,6 +1,8 @@
 const express = require('express');
 const { randomBytes } = require('crypto');
 const readFile = require('./utils/readfile');
+const verifyEmail = require('./middleware/emailVerifyMiddleware');
+const verifyPassword = require('./middleware/passwordVerifyMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -34,7 +36,7 @@ app.get('/talker/:id', async (req, res) => {
   res.status(HTTP_OK_STATUS).json(findData);
 });
 
-app.post('/login', async (_req, res) => {
+app.post('/login', verifyEmail, verifyPassword, async (_req, res) => {
   const token = () => randomBytes(8).toString('hex');
 
   res.status(200).json({ token: token() });
