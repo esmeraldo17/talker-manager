@@ -1,8 +1,10 @@
 const express = require('express');
 const { randomBytes } = require('crypto');
 const readFile = require('./utils/readfile');
+const writeFile = require('./utils/writeFile');
 const verifyEmail = require('./middleware/emailVerifyMiddleware');
 const verifyPassword = require('./middleware/passwordVerifyMiddleware');
+const validateTalker = require('./middleware/validateTalkerMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -40,4 +42,23 @@ app.post('/login', verifyEmail, verifyPassword, async (_req, res) => {
   const token = () => randomBytes(8).toString('hex');
 
   res.status(200).json({ token: token() });
+});
+
+app.post('/talker',
+  validateTalker.verifyAuthorization,
+  validateTalker.verifyName,
+  validateTalker.verifyAge,
+  validateTalker.verifyTalk,
+  validateTalker.verifywatchedAt,
+  validateTalker.verifyRate,
+  async (req, res) => {
+    const data = await readFile();
+    const id = data.length + 1;
+    const requestBody = req.body;
+    const requestPost = { id, ...requestBody };
+    const newTalkerData = [...data, requestPost];
+
+    await writeFile(newTalkerData);
+
+    res.status(201).json(requestPost);
 });
