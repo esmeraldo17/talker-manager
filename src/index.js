@@ -88,3 +88,15 @@ app.put('/talker/:id',
 
     res.status(200).json(editedTalker);
 });
+
+app.delete('/talker/:id', validateTalker.verifyAuthorization, async (req, res) => {
+  const { id } = req.params;
+  const data = await readFile();
+
+  const talkerToDeleteIndex = data.findIndex((talker) => talker.id === Number(id));
+
+  data.splice(talkerToDeleteIndex, 1);
+
+  await writeFile(data);
+  res.status(204).json();
+});
