@@ -21,6 +21,25 @@ app.listen(PORT, () => {
   console.log('Online');
 });
 
+app.get('/talker/search', validateTalker.verifyAuthorization, async (req, res) => {
+  const { q } = req.query;
+  const data = await readFile();
+
+  if (!q) {
+    res.status(200).json(data);
+    return;
+  }
+
+  const findtalker = data.filter((e) => e.name.includes(q));
+
+  if (!findtalker) {
+    res.status(200).json([]);
+    return;
+  }
+
+  res.status(200).json(findtalker);
+});
+
 app.get('/talker', async (_req, res) => {
   const data = await readFile();
   res.status(HTTP_OK_STATUS).json(data);
